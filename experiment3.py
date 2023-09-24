@@ -43,10 +43,10 @@ def compute_tnr_at_95_tpr(targets, scores):
 
 parser = argparse.ArgumentParser(description='RealNVP')
 
-parser.add_argument('--input_folder', type=str, default='/local2/is148265/sc264857/sc264857/flows_ood/experiments/density_ood_vs_id_alpha', required=False, metavar='PATH',
-                help='path to results (with in-distribution results) (default: /local2/is148265/sc264857/sc264857/flows_ood/experiments/plots_xp3/density_ood_vs_id_alpha) (default: None)')
-parser.add_argument('--output_folder', type=str, default='/local2/is148265/sc264857/sc264857/flows_ood/experiments/plots_xp3', required=False, metavar='PATH',
-                help='path to results (e.g.: /local2/is148265/sc264857/sc264857/flows_ood/experiments/plots_xp3) (default: None)')
+parser.add_argument('--input_folder', type=str, default=None, required=False, metavar='PATH',
+                help='path to results (with in-distribution results) (default: None)')
+parser.add_argument('--output_folder', type=str, default=None
+                help='path to results (e.g.: None) (default: None)')
 #parser.add_argument('--quantile', type=float, default=0.99, required=False, metavar='PATH',
 #                help='Quantile order for the computation of the threshold value of the gradient (a fraction args.quantile is under this value in the training set). Used during classification.')
 
