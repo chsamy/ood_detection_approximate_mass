@@ -21,6 +21,10 @@ from flow_ssl.data import make_sup_data_loaders
 parser = argparse.ArgumentParser(description='RealNVP')
 parser.add_argument('--model_path', type=str, default=None, required=True,
                 help='Path to trained model.')
+parser.add_argument('--data_path', type=str, default=None, required=True,
+                help='Path to dataset.')
+parser.add_argument('--ood_data_path', type=str, default=None, required=True,
+                help='Path to dataset.')
 parser.add_argument('--results_path', type=str, default=None, required=True,
                 help='Path where results are written into.')
 parser.add_argument('--batch_size', type=int, default=32, required=False,
@@ -41,32 +45,6 @@ with open(os.path.join(args.results_path, 'command_density_detection.sh'), 'w') 
 
 
 ################################## DATA ##################################
-if args.dataset.lower() == 'fashionmnist':
-    data_path = '/local2/is148265/sc264857/sc264857/torch/data/FashionMNIST/FashionMNIST/processed/'
-elif args.dataset.lower() == "mnist":
-    data_path = '/local2/is148265/sc264857/sc264857/torch/data/MNIST/MNIST/processed/'
-elif args.dataset.lower() == "cifar10":
-    data_path = '/local2/is148265/sc264857/sc264857/torch/data/CIFAR10/cifar-10-batches-py'
-elif args.dataset.lower() == "svhn":
-    data_path = '/local2/is148265/sc264857/sc264857/torch/data/SVHN'
-elif args.dataset.lower() == "celeba":
-    data_path = '/local2/is148265/sc264857/sc264857/torch/data/CelebA/Img_IDEMIA/img_align_celeba'
-
-if args.ood_dataset.lower() == 'fashionmnist':
-    ood_data_path = '/local2/is148265/sc264857/sc264857/torch/data/FashionMNIST/FashionMNIST/processed/'
-elif args.ood_dataset.lower() == "mnist":
-    ood_data_path = '/local2/is148265/sc264857/sc264857/torch/data/MNIST/MNIST/processed/'
-elif args.ood_dataset.lower() == "cifar10":
-    ood_data_path = '/local2/is148265/sc264857/sc264857/torch/data/CIFAR10/cifar-10-batches-py'
-elif args.ood_dataset.lower() == "svhn":
-    ood_data_path = '/local2/is148265/sc264857/sc264857/torch/data/SVHN'
-elif args.ood_dataset.lower() == "celeba":
-    ood_data_path = '/local2/is148265/sc264857/sc264857/torch/data/celebA'
-if args.ood_dataset.lower() == 'sun':
-    ood_data_path = '/local2/is148265/sc264857/sc264857/torch/data/SUN/'
-if args.ood_dataset.lower() == 'places365':
-    ood_data_path = '/local2/is148265/sc264857/sc264857/torch/data/Places/'
-
 transform_train = transforms.Compose([transforms.ToTensor()])
 transform_test = transforms.Compose([transforms.ToTensor()])
 
@@ -81,7 +59,7 @@ elif args.dataset.lower() in ["cifar10", "svhn", "celeba"]:
 
 if args.ood_dataset.lower() not in ['sun', 'inaturalist', 'sun', 'places365', 'dtd']:
     trainloader, testloader, _ = make_sup_data_loaders(
-            data_path, 
+            args.data_path, 
             args.batch_size, 
             8, 
             transform_train, 
@@ -91,7 +69,7 @@ if args.ood_dataset.lower() not in ['sun', 'inaturalist', 'sun', 'places365', 'd
             dataset=args.dataset.lower())
 
     ood_trainloader, ood_testloader, _ = make_sup_data_loaders(
-            ood_data_path, 
+            args.ood_data_path, 
             args.batch_size, 
             8, 
             transform_train, 
@@ -100,8 +78,8 @@ if args.ood_dataset.lower() not in ['sun', 'inaturalist', 'sun', 'places365', 'd
             shuffle_train=True,
             dataset=args.ood_dataset.lower())
 elif args.ood_dataset.lower() == 'inaturalist':
-    train_set = torchvision.datasets.INaturalist(root=ood_data_path, transform=transform_train, version='2021_train', download=True)
-    test_set = torchvision.datasets.INaturalist(root=ood_data_path, transform=transform_test, version='2021_val', download=True)
+    train_set = torchvision.datasets.INaturalist(root=args.ood_data_path, transform=transform_train, version='2021_train', download=True)
+    test_set = torchvision.datasets.INaturalist(root=args.ood_data_path, transform=transform_test, version='2021_val', download=True)
     ood_train_loader = torch.utils.data.DataLoader(
                 train_set,
                 batch_size=args.batch_size,
@@ -117,8 +95,8 @@ elif args.ood_dataset.lower() == 'inaturalist':
                 pin_memory=True
         )
 elif args.ood_dataset.lower() == 'sun':
-    train_set = torchvision.datasets.SUN397(root=ood_data_path, transform=transform_train, download=True)
-    test_set = torchvision.datasets.SUN397(root=ood_data_path, transform=transform_test, download=True)
+    train_set = torchvision.datasets.SUN397(root=args.ood_data_path, transform=transform_train, download=True)
+    test_set = torchvision.datasets.SUN397(root=args.ood_data_path, transform=transform_test, download=True)
     ood_train_loader = torch.utils.data.DataLoader(
                 train_set,
                 batch_size=args.batch_size,
@@ -134,8 +112,8 @@ elif args.ood_dataset.lower() == 'sun':
                 pin_memory=True
         )
 elif args.ood_dataset.lower() == 'places365':
-    train_set = torchvision.datasets.Places365(root=ood_data_path, transform=transform_train, split='train-standard', download=True)
-    test_set = torchvision.datasets.Places365(root=ood_data_path, transform=transform_test, split='val', download=True)
+    train_set = torchvision.datasets.Places365(root=args.ood_data_path, transform=transform_train, split='train-standard', download=True)
+    test_set = torchvision.datasets.Places365(root=args.ood_data_path, transform=transform_test, split='val', download=True)
     ood_train_loader = torch.utils.data.DataLoader(
                 train_set,
                 batch_size=args.batch_size,
@@ -151,8 +129,8 @@ elif args.ood_dataset.lower() == 'places365':
                 pin_memory=True
         )
 elif args.ood_dataset.lower() == 'dtd':
-    train_set = torchvision.datasets.DTD(root=ood_data_path, transform=transform_train, version='train_standard', download=True)
-    test_set = torchvision.datasets.DTD(root=ood_data_path, transform=transform_test, version='val', download=True)
+    train_set = torchvision.datasets.DTD(root=args.ood_data_path, transform=transform_train, version='train_standard', download=True)
+    test_set = torchvision.datasets.DTD(root=args.ood_data_path, transform=transform_test, version='val', download=True)
     ood_train_loader = torch.utils.data.DataLoader(
                 train_set,
                 batch_size=args.batch_size,
