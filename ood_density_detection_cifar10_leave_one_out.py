@@ -24,6 +24,8 @@ from flow_ssl.data import make_sup_data_loaders
 parser = argparse.ArgumentParser(description='RealNVP')
 parser.add_argument('--model_path', type=str, default=None, required=True,
                 help='Path to trained model.')
+parser.add_argument('--data_path', type=str, default=None, required=True,
+                help='Path to dataset.')
 parser.add_argument('--results_path', type=str, default=None, required=True,
                 help='Path where results are written into.')
 parser.add_argument('--id_class', type=str, default='dog',
@@ -46,7 +48,6 @@ with open(os.path.join(args.results_path, 'command_density_detection.sh'), 'w') 
 
 
 ################################## DATA ##################################
-data_path = '/local2/is148265/sc264857/sc264857/torch/data/CIFAR10/cifar-10-batches-py'
 img_shape = (3, 32, 32)
 D = int(np.prod(img_shape))
 
@@ -61,8 +62,8 @@ transform_train = transforms.Compose([transforms.ColorJitter(brightness=0.5, hue
                                     transforms.ToTensor()])
 '''
 
-train_set = datasets.CIFAR10(root=data_path, train=True, transform=transform_train, download=True)
-test_set = datasets.CIFAR10(root=data_path, train=False, transform=transform_test, download=True)
+train_set = datasets.CIFAR10(root=args.data_path, train=True, transform=transform_train, download=True)
+test_set = datasets.CIFAR10(root=args.data_path, train=False, transform=transform_test, download=True)
 
 '''
 train_indices = []
