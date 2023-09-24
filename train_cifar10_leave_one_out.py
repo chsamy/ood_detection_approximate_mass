@@ -30,8 +30,6 @@ from sklearn.metrics import roc_auc_score
 
 #############################PRESET PARAMETERS#############################
 dataset = 'CIFAR10'
-data_path = '/local2/is148265/sc264857/sc264857/torch/data/CIFAR10/cifar-10-batches-py'
-
 #############################FUNCTION DEFINITION#############################
 def linear_rampup(final_value, epoch, num_epochs, start_epoch=0):
     t = (epoch - start_epoch + 1) / num_epochs
@@ -206,6 +204,8 @@ parser.add_argument('--id_class', type=str, default='dog',
                 help='In-distribution class in the CIFAR-10 datastet. By default the dog class is considered ID.')
 parser.add_argument('--results_path', type=str, default=None, required=True,
                 help='Path where results are written into.')
+parser.add_argument('--data_path', type=str, default=None, required=True,
+                help='Path to cifar-10 dataset.')
 parser.add_argument('--logdir', type=str, default=None, required=True, metavar='PATH',
                 help='path to log directory (default: None)')
 parser.add_argument('--ckptdir', type=str, default=None, required=True, metavar='PATH',
@@ -276,8 +276,8 @@ transform_train = transforms.Compose([transforms.ToTensor()])
 '''
 transform_test = transforms.Compose([transforms.ToTensor()])
 
-train_set = datasets.CIFAR10(root=data_path, train=True, transform=transform_train, download=True)
-test_set = datasets.CIFAR10(root=data_path, train=False, transform=transform_test, download=True)
+train_set = datasets.CIFAR10(root=args.data_path, train=True, transform=transform_train, download=True)
+test_set = datasets.CIFAR10(root=args.data_path, train=False, transform=transform_test, download=True)
 
 '''
 train_indices = []
