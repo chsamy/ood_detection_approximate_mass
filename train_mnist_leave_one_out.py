@@ -186,6 +186,8 @@ def test(epoch, net, testloader, device, loss_fn, writer, results_path, ood=Fals
 parser = argparse.ArgumentParser(description='RealNVP')
 parser.add_argument('--dataset', type=str, default="FashionMNIST", required=True, metavar='DATA',
                 help='Dataset name (default: FashionMNIST)')
+parser.add_argument('--data_path', type=str, default=None, required=True,
+                help='Path to dataset.')
 parser.add_argument('--alpha', type=float, default=0.1,
                 help='Coefficient of penalization in the loss function.')
 parser.add_argument('--id_class', type=str, default='Pullover',
@@ -248,16 +250,14 @@ img_shape = (1, 28, 28)
 
 if args.dataset.lower() == 'fashionmnist':
     dataset = 'FashionMNIST'
-    data_path = '/local2/is148265/sc264857/sc264857/torch/data/FashionMNIST/FashionMNIST/processed/'
-
     transform_train = transforms.Compose([transforms.RandomCrop(28, padding=4),
                                         transforms.RandomVerticalFlip(p=0.5),
                                         transforms.RandomRotation(degrees=45),
                                         transforms.ToTensor()])
     transform_test = transforms.Compose([transforms.ToTensor()])
 
-    train_set = datasets.FashionMNIST(root=data_path, train=True, transform=transform_train, download=True)
-    test_set = datasets.FashionMNIST(root=data_path, train=False, transform=transform_test, download=True)
+    train_set = datasets.FashionMNIST(root=args.data_path, train=True, transform=transform_train, download=True)
+    test_set = datasets.FashionMNIST(root=args.data_path, train=False, transform=transform_test, download=True)
 
     train_ood_idx = train_set.class_to_idx[args.id_class]
     test_ood_idx = test_set.class_to_idx[args.id_class]
@@ -283,14 +283,12 @@ if args.dataset.lower() == 'fashionmnist':
 
 elif args.dataset.lower()=='mnist':
     dataset = 'MNIST'
-    data_path = '/local2/is148265/sc264857/sc264857/torch/data/MNIST/MNIST/processed/'
-
     transform_train = transforms.Compose([transforms.RandomCrop(28, padding=4),
                                         transforms.ToTensor()])
     transform_test = transforms.Compose([transforms.ToTensor()])
 
-    train_set = datasets.MNIST(root=data_path, train=True, transform=transform_train, download=False)
-    test_set = datasets.MNIST(root=data_path, train=False, transform=transform_test, download=False)
+    train_set = datasets.MNIST(root=args.data_path, train=True, transform=transform_train, download=False)
+    test_set = datasets.MNIST(root=args.data_path, train=False, transform=transform_test, download=False)
 
     train_indices = []
     test_indices = []
